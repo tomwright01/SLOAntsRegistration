@@ -1,12 +1,13 @@
 import subprocess
 import argparse
+import tempfile
 
 def main(img1,img2,mask,verbose,IMPath):
     """
     Uses ANT executable ImageMath to calculate similarity between two images.
     """
-   
-    cmd = '{0} 2 place.jpg NormalizedCorrelation {1} {2} {3}'.format(IMPath,img1,img2,mask)
+    tempfile = os.path.join(tempfile.gettempdir(),'place.nii')
+    cmd = '{0} 2 {4} NormalizedCorrelation {1} {2} {3}'.format(IMPath,img1,img2,mask,tempfile)
     #cmd = '{0} 2 place.jpg Mattes {1} {2} {3}'.format(IMPath,img1,img2,mask)
     
     if verbose:

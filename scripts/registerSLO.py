@@ -9,6 +9,7 @@ import registerFrame
 import ConvertToJpeg
 import calcSimilarity
 import averageFrames
+import calcFrameBrightness
 
 def main(input_avi,outdir,mask1,mask2,verbose,force,avconvPath,convtojpegPath,imPath,antsPath,avgimgPath):
     """
@@ -45,12 +46,20 @@ def main(input_avi,outdir,mask1,mask2,verbose,force,avconvPath,convtojpegPath,im
     #extract the frames
     extractFrames.main(input_avi,frame_dir,'frame-%03d.tiff',verbose,avconvPath)
     
-    #set the fixed frame
-    #FIXME
-    fixedFrame = os.path.join(frame_dir,'frame-014.tiff')
-    
+   
     #get the list of frames
-    files = [ f for f in os.listdir(frame_dir) if os.path.isfile(os.path.join(frame_dir,f)) ]
+    frames = [ f for f in os.listdir(frame_dir) if os.path.isfile(os.path.join(frame_dir,f)) ]
+
+
+    #set the fixed frame
+    frame_brightness=[]
+    
+    for frame in frames:
+        frame_brightness.append(calcFrameBrightness.main(os.path.join(frame_dir,frame),None,verbose,imPath))
+        
+    fixedFrameIdx = frame_brightness.index(max(frame_brightness))
+    fixedFrame = os.path.join(frame_dir,frames[fixedFrameIdx])
+
     
     workingDir = os.path.join(outdir,'tmp/')
     if not os.path.isdir(workingDir):
@@ -61,20 +70,20 @@ def main(input_avi,outdir,mask1,mask2,verbose,force,avconvPath,convtojpegPath,im
             os.remove(os.path.join(workingDir,f))
 
     similarityMetrics = []            
-    for file in files:
+    for frame in frames:
         #first register the frame
-        movingFrame=os.path.join(frame_dir,file)
+        movingFrame=os.path.join(frame_dir,frame)
         registerFrame.main(fixedFrame,movingFrame,verbose,workingDir,mask1,antsPath)
         createdFrame = os.path.join(workingDir,'Warped.nii.gz')
         #convert the generated frame into a jpg
         ConvertToJpeg.main(createdFrame,
-                           os.path.join(outdir,file),
+                           os.path.join(outdir,frame),
                            verbose,
                            convtojpegPath)
         #for each generated frame calculate the similarity to the fixed frame
         
         similarityMetrics.append(calcSimilarity.main(fixedFrame,
-                                                    os.path.join(outdir,file),
+                                                    os.path.join(outdir,frame),
                                                     mask2,
                                                     verbose,
                                                     imPath))
@@ -84,7 +93,7 @@ def main(input_avi,outdir,mask1,mask2,verbose,force,avconvPath,convtojpegPath,im
     orderedList = sorted(enumerate(similarityMetrics),key=operator.itemgetter(1))
     index = [i[0] for i in orderedList]
     
-    filesToAverage = [os.path.join(outdir,files[i]) for i in index[:4]]
+    filesToAverage = [os.path.join(outdir,frames[i]) for i in index[:4]]
     
     
     averageFrames.main(filesToAverage,os.path.join(workingDir,'average.nii.gz'),verbose,avgimgPath)

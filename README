@@ -1,0 +1,9 @@
+# SLO ANTs Registration
+
+Uses the Advanced Normalization Tools (ANTs) for image registration and processing
+http://stnava.github.io/ANTs/
+
+The rest is written in python (2.7)
+
+Example usage:
+$python scripts/registerSLO.py data/SLO_refl_video.avi --outdir output/ --mask1 data/mask_s.bmp --mask2 data/mask_s.bmp -v -f

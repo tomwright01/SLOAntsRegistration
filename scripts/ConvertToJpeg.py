@@ -6,7 +6,7 @@ def main(finput,output,verbose,exePath):
     Uses ANT executable ConvertToJpg to convert from *.nii.gz to jpg.
     """
    
-    cmd = '{0} {1} {2}'.format(exePath,finput,output)
+    cmd = '{0} "{1}" "{2}"'.format(exePath,finput,output)
     if verbose:
         print "Called command:{0}".format(cmd)
     subprocess.check_call(cmd,shell=True,executable='/bin/bash')

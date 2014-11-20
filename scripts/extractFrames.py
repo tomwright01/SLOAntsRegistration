@@ -6,7 +6,7 @@ def main(finput,dest,name,verbose,avconvPath):
     Uses avconv executable to extract frames in a movie.
     """
 
-    cmd = '{0} -i {1} -f image2 {2}{3}'.format(avconvPath,finput,dest,name)
+    cmd = '{0} -i "{1}" -f image2 "{2}{3}"'.format(avconvPath,finput,dest,name)
     if verbose:
         print "Called command:{0}".format(cmd)
     subprocess.check_call(cmd,shell=True,executable='/bin/bash')

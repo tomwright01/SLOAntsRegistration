@@ -7,11 +7,11 @@ def main(img1,mask,verbose,exePath):
     """Uses the ANTs ImageMath executable to calulate the total brightness of an image.
     The brightest frame is often the one in best focus.
     """
-    tempfile = os.path.join(tempfile.gettempdir(),'place.nii')
+    tempdir = os.path.join(tempfile.gettempdir(),'place.nii')
     if mask is None:
-        cmd = '{0} 2 {2} total {1}'.format(exePath,img1,tempfile)
+        cmd = '{0} 2 "{2}" total "{1}"'.format(exePath,img1,tempdir)
     else:
-        cmd = '{0} 2 {3} total {1} {2}'.format(exePath,img1,mask.tempfile)
+        cmd = '{0} 2 "{3}" total "{1}" "{2}"'.format(exePath,img1,mask,tempdir)
         
     if verbose:
         print("Called command:{0}".format(cmd))

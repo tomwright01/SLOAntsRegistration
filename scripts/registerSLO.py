@@ -73,21 +73,24 @@ def main(input_avi,outdir,mask1,mask2,verbose,force,avconvPath,convtojpegPath,im
     for frame in frames:
         #first register the frame
         movingFrame=os.path.join(frame_dir,frame)
-        registerFrame.main(fixedFrame,movingFrame,verbose,workingDir,mask1,antsPath)
-        createdFrame = os.path.join(workingDir,'Warped.nii.gz')
-        #convert the generated frame into a jpg
-        ConvertToJpeg.main(createdFrame,
-                           os.path.join(outdir,frame),
-                           verbose,
-                           convtojpegPath)
-        #for each generated frame calculate the similarity to the fixed frame
-        
-        similarityMetrics.append(calcSimilarity.main(fixedFrame,
-                                                    os.path.join(outdir,frame),
-                                                    mask2,
-                                                    verbose,
-                                                    imPath))
-    
+        try:
+            registerFrame.main(fixedFrame,movingFrame,verbose,workingDir,mask1,antsPath)
+            createdFrame = os.path.join(workingDir,'Warped.nii.gz')
+            #convert the generated frame into a jpg
+            ConvertToJpeg.main(createdFrame,
+                               os.path.join(outdir,frame),
+                               verbose,
+                               convtojpegPath)
+            #for each generated frame calculate the similarity to the fixed frame
+            
+            similarityMetrics.append(calcSimilarity.main(fixedFrame,
+                                                        os.path.join(outdir,frame),
+                                                        mask2,
+                                                        verbose,
+                                                        imPath))
+        except CalledProcessError: 
+            similarityMetrics.append(0)
+            
     #similarity metrics is a list of floats, want to sort these to get the most similar
     #using the NormalizedCorrelation measure, most similar has a value of -1
     orderedList = sorted(enumerate(similarityMetrics),key=operator.itemgetter(1))

@@ -7,7 +7,10 @@ def main(img1,img2,mask,verbose,IMPath):
     Uses ANT executable ImageMath to calculate similarity between two images.
     """
     temploc = os.path.join(tempfile.gettempdir(),'place.nii')
-    cmd = '{0} 2 {4} NormalizedCorrelation {1} {2} {3}'.format(IMPath,img1,img2,mask,temploc)
+    if mask is not None:
+        cmd = '{0} 2 {4} NormalizedCorrelation {1} {2} {3}'.format(IMPath,img1,img2,mask,temploc)
+    else:
+        cmd = '{0} 2 {4} NormalizedCorrelation {1} {2}'.format(IMPath,img1,img2,mask,temploc)
     #cmd = '{0} 2 place.jpg Mattes {1} {2} {3}'.format(IMPath,img1,img2,mask)
     
     if verbose:

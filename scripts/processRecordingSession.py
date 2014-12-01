@@ -3,7 +3,7 @@ import re
 import argparse
 import registerSLO
 
-def main(folder,mask1,mask2,verbose,force,avconvPath,convtojpegPath,imPath,antsPath,avgimgPath):
+def main(folder,mask1,mask2,verbose,force,avconvPath,convtojpegPath,imPath,antsPath,avgimgPath,threshPath,applyPath):
     """Uses the registerSLO.py script to process all SLO recordings in a session.
     Creates a sub folder for each SLO recording, 
     tries to register the frames and create an average image.
@@ -17,7 +17,7 @@ def main(folder,mask1,mask2,verbose,force,avconvPath,convtojpegPath,imPath,antsP
         os.mkdir(output_dir)
 
     for f in input_files:
-        match=re.search('(SLO_refl_video).*([0-9]{6})(.avi)',input_files[0])
+        match=re.search('(SLO_refl_video).*([0-9]{6})(.avi)',f)
         time_stamp = match.group(2)
         working_dir = os.path.join(output_dir,time_stamp)
         if not os.path.isdir(working_dir):
@@ -25,7 +25,7 @@ def main(folder,mask1,mask2,verbose,force,avconvPath,convtojpegPath,imPath,antsP
         
         src_file = os.path.join(folder,f)
         
-        registerSLO.main(src_file,working_dir,mask1,mask2,verbose,force,avconvPath,convtojpegPath,imPath,antsPath,avgimgPath)
+        registerSLO.main(src_file,working_dir,mask1,mask2,verbose,force,avconvPath,convtojpegPath,imPath,antsPath,avgimgPath,threshPath,applyPath)
         
 if __name__ == "__main__":  
     parser = argparse.ArgumentParser(description='Register frames in an SLO file using scripts and executables from ANTs')
@@ -48,6 +48,12 @@ if __name__ == "__main__":
     parser.add_argument('--avgimgPath',
                         help="Path to the AverageImage executable",
                         default="/home/tom/Documents/Projects/antsbin/bin/AverageImages")
+    parser.add_argument('--threshPath',
+                        help="Path to the ThresholdImage executable",
+                        default="/home/tom/Documents/Projects/antsbin/bin/ThresholdImage")
+    parser.add_argument('--applyPath',
+                        help="Path to the antsApplyTransform executable",
+                        default="/home/tom/Documents/Projects/antsbin/bin/antsApplyTransform")
 
 
     args=parser.parse_args()
@@ -61,4 +67,6 @@ if __name__ == "__main__":
         args.convtojpegPath,
         args.imPath,
         args.antsPath,
-        args.avgimgPath)
+        args.avgimgPath,
+        args.threshPath,
+        args.applyPath)

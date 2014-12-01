@@ -3,6 +3,7 @@ import argparse
 import tempfile
 import shutil
 import operator
+import subprocess
 
 import extractFrames
 import registerFrame
@@ -10,8 +11,13 @@ import ConvertToJpeg
 import calcSimilarity
 import averageFrames
 import calcFrameBrightness
+import thresholdFrame
+import applyTransform
+import extractFramesFromAvi
+import writeNpArrayAsImages
+import cleanImageList
 
-def main(input_avi,outdir,mask1,mask2,verbose,force,avconvPath,convtojpegPath,imPath,antsPath,avgimgPath):
+def main(input_avi,outdir,mask1,mask2,verbose,force,avconvPath,convtojpegPath,imPath,antsPath,avgimgPath,threshPath,applyPath):
     """
     Register frames in an SLO file using scripts and executables from ANTs
     https://stnava.github.io/ANTs/
@@ -42,9 +48,23 @@ def main(input_avi,outdir,mask1,mask2,verbose,force,avconvPath,convtojpegPath,im
     #make a directory to store the frames
     frame_dir = os.path.join(outdir,'frames/')
     os.mkdir(frame_dir)
+
+    workingDir = os.path.join(outdir,'tmp/')
+    if not os.path.isdir(workingDir):
+        os.mkdir(workingDir)
+    else:
+        #empty any files in the working dir
+        for f in os.listdir(workingDir):
+            os.remove(os.path.join(workingDir,f))
+
+    #Open a file to keep store information about the registration process
+    fnotes = open(os.path.join(outdir,'notes.txt'),'w')
     
     #extract the frames
-    extractFrames.main(input_avi,frame_dir,'frame-%03d.tiff',verbose,avconvPath)
+    #extractFrames.main(input_avi,frame_dir,'frame-%03d.tiff',verbose,avconvPath)
+    imgs=extractFramesFromAvi.main(input_avi,True)
+    imgs=cleanImageList.main(imgs)
+    writeNpArrayAsImages.main(imgs['data'],imgs['fids'],frame_dir,'frame-{0:03d}.png')
     
    
     #get the list of frames
@@ -60,27 +80,51 @@ def main(input_avi,outdir,mask1,mask2,verbose,force,avconvPath,convtojpegPath,im
     fixedFrameIdx = frame_brightness.index(max(frame_brightness))
     fixedFrame = os.path.join(frame_dir,frames[fixedFrameIdx])
 
+    #threshold the fixed frame
+    #thresholdFrame.main(fixedFrame,
+    #               os.path.join(workingDir,'fixedFrame.nii.gz'),
+    #               95, 150,
+    #               verbose,
+    #               threshPath)
+
+    #store this info
+    fnotes.write("FixedFrame:{0}\n".format(frames[fixedFrameIdx]))
     
-    workingDir = os.path.join(outdir,'tmp/')
-    if not os.path.isdir(workingDir):
-        os.mkdir(workingDir)
-    else:
-        #empty any files in the working dir
-        for f in os.listdir(workingDir):
-            os.remove(os.path.join(workingDir,f))
+    
 
     similarityMetrics = []            
     for frame in frames:
-        #first register the frame
+        #first threshold the frame
         movingFrame=os.path.join(frame_dir,frame)
+        #thresholdFrame.main(movingFrame,
+        #           os.path.join(workingDir,'movingFrame.nii.gz'),
+        #           95, 150,
+        #           verbose,
+        #           threshPath)
+        #then register the frame
+
         try:
+            #registerFrame.main(os.path.join(workingDir,'fixedFrame.nii.gz'),os.path.join(workingDir,'movingFrame.nii.gz'),verbose,workingDir,mask1,antsPath)
             registerFrame.main(fixedFrame,movingFrame,verbose,workingDir,mask1,antsPath)
             createdFrame = os.path.join(workingDir,'Warped.nii.gz')
+            
+            #Now apply the generated transform to the original frame
+            #applyTransform.main(movingFrame,
+            #                    os.path.join(workingDir,'transformed.nii.gz'),
+            #                    createdFrame,
+            #                    fixedFrame,
+            #                    verbose,
+            #                    applyPath)
+            
             #convert the generated frame into a jpg
+            #ConvertToJpeg.main(os.path.join(workingDir,'transformed.nii.gz'),
+            #                   os.path.join(outdir,frame),
+            #                   verbose,
+            #                   convtojpegPath)
             ConvertToJpeg.main(createdFrame,
-                               os.path.join(outdir,frame),
-                               verbose,
-                               convtojpegPath)
+                                os.path.join(outdir,frame),
+                                verbose,
+                                convtojpegPath)            
             #for each generated frame calculate the similarity to the fixed frame
             
             similarityMetrics.append(calcSimilarity.main(fixedFrame,
@@ -88,7 +132,7 @@ def main(input_avi,outdir,mask1,mask2,verbose,force,avconvPath,convtojpegPath,im
                                                         mask2,
                                                         verbose,
                                                         imPath))
-        except CalledProcessError: 
+        except subprocess.CalledProcessError: 
             similarityMetrics.append(0)
             
     #similarity metrics is a list of floats, want to sort these to get the most similar
@@ -98,6 +142,10 @@ def main(input_avi,outdir,mask1,mask2,verbose,force,avconvPath,convtojpegPath,im
     
     filesToAverage = [os.path.join(outdir,frames[i]) for i in index[:4]]
     
+    #store this info
+    fnotes.write('Frames in average:\n')
+    for i in index[:4]:
+        fnotes.write(frames[i] + "\n")
     
     averageFrames.main(filesToAverage,os.path.join(workingDir,'average.nii.gz'),verbose,avgimgPath)
     
@@ -109,7 +157,7 @@ def main(input_avi,outdir,mask1,mask2,verbose,force,avconvPath,convtojpegPath,im
     #clean up
     shutil.rmtree(frame_dir)
     shutil.rmtree(workingDir)
-
+    fnotes.close()
     
     print(filesToAverage)
 if __name__ == "__main__":  
@@ -135,7 +183,12 @@ if __name__ == "__main__":
     parser.add_argument('--avgimgPath',
                         help="Path to the AverageImage executable",
                         default="/home/tom/Documents/Projects/antsbin/bin/AverageImages")
-
+    parser.add_argument('--threshPath',
+                        help="Path to the ThresholdImage executable",
+                        default="/home/tom/Documents/Projects/antsbin/bin/ThresholdImage")
+    parser.add_argument('--applyPath',
+                        help="Path to the antsApplyTransform executable",
+                        default="/home/tom/Documents/Projects/antsbin/bin/antsApplyTransform")
 
     args=parser.parse_args()
     
@@ -149,4 +202,6 @@ if __name__ == "__main__":
         args.convtojpegPath,
         args.imPath,
         args.antsPath,
-        args.avgimgPath)
+        args.avgimgPath,
+        args.threshPath,
+        args.applyPath)

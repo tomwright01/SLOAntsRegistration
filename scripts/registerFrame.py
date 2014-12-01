@@ -21,12 +21,12 @@ def main(fixed,moving,verbose,working,mask,antsPath):
                 'use-histogram-matching':'0',
                 'winsorize-image-intensities':'[0.005,0.995]',
                 'transform':'Rigid[0.1]',
-                'convergence':'[1000x500x250x0,1e-6,10]',
-                'shrink-factors':'12x8x4x2',
-                'smoothing-sigmas':'4x3x2x1vox',
+                'convergence':'[500x2500x100x1,1e-7,10]',
+                'shrink-factors':'8x4x2x1',
+                'smoothing-sigmas':'4x3x2x0vox',
                 'output':'[{0},{0}Warped.nii.gz,{0}InverseWarped.nii.gz]'.format(working),
                 'initial-moving-transform':'["{0}","{1}",1]'.format(fixed,moving),
-                'metric':'MI["{0}","{1}",1,32,Regular,0.25]'.format(fixed,moving)
+                'metric':'MI["{0}","{1}",1,32,regular,0.25]'.format(fixed,moving)
                 }
                 
     if mask is not None:

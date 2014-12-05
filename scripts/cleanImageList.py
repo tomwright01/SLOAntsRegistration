@@ -43,7 +43,6 @@ def main(imgs):
         right=odd
     else:
         raise Exception("Interlace rows not found")
-    print(right)
     working=working[:,(left>0),:]
     right=right[(left>0)]
     working=working[:,(right>0),:]

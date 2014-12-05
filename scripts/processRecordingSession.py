@@ -39,21 +39,21 @@ if __name__ == "__main__":
     parser.add_argument('--avconvPath',help='path to the avconv executable',
                         default='/usr/bin/avconv')
     parser.add_argument('--convtojpegPath',help='path to the ConvertToJpg executable',
-                        default='/home/tom/Documents/Projects/antsbin/bin/ConvertToJpg')
+                        default='/home/tom/Source/ANTsStuff/antsbin/bin/ConvertToJpg')
     parser.add_argument('--imPath',help='path to the ImageMath executable',
-                        default='/home/tom/Documents/Projects/antsbin/bin/ImageMath')
+                        default='/home/tom/Source/ANTsStuff/antsbin/bin/ImageMath')
     parser.add_argument('--antsPath',
                         help="Path to the antsRegistration executable",
-                        default="/home/tom/Documents/Projects/antsbin/bin/antsRegistration")
+                        default="/home/tom/Source/ANTsStuff/antsbin/bin")
     parser.add_argument('--avgimgPath',
                         help="Path to the AverageImage executable",
-                        default="/home/tom/Documents/Projects/antsbin/bin/AverageImages")
+                        default="/home/tom/Source/ANTsStuff/antsbin/bin/AverageImages")
     parser.add_argument('--threshPath',
                         help="Path to the ThresholdImage executable",
-                        default="/home/tom/Documents/Projects/antsbin/bin/ThresholdImage")
+                        default="/home/tom/Source/ANTsStuff/antsbin/bin/ThresholdImage")
     parser.add_argument('--applyPath',
                         help="Path to the antsApplyTransform executable",
-                        default="/home/tom/Documents/Projects/antsbin/bin/antsApplyTransform")
+                        default="/home/tom/Source/ANTsStuff/antsbin/bin/antsApplyTransform")
 
 
     args=parser.parse_args()

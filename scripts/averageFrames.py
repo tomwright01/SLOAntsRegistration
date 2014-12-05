@@ -1,12 +1,18 @@
 import subprocess
 import argparse
+import logging
 
 def main(framelist,output,verbose,avgimgPath):
     """
     Create an average frame from frames in framelist
     """
+    logging.info('Averaging frames with command:')
+    logging.info('==============================')
+    
     frameStr = ' '.join(framelist)
     cmd = '{0} 2 {1} 1 {2}'.format(avgimgPath,output,frameStr)
+    logging.info(cmd)
+    logging.info('==============================')
     if verbose:
         print "Called command:{0}".format(cmd)
     subprocess.check_call(cmd,shell=True,executable='/bin/bash')

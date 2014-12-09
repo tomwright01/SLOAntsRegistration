@@ -62,7 +62,7 @@ def main(input_avi,outdir,mask1,mask2,verbose,force,antsPath):
     #extract the frames
     #extractFrames.main(input_avi,frame_dir,'frame-%03d.tiff',verbose,avconvPath)
     imgs=extractFramesFromAvi.main(input_avi,True)
-    imgs=imgs[:,:,0:10]
+    #imgs=imgs[:,:,0:10]
     logging.info('frames extracted')
     cleanimgs=cleanImageList.main(imgs)
     logging.info('frames cleaned')
@@ -149,8 +149,8 @@ def main(input_avi,outdir,mask1,mask2,verbose,force,antsPath):
                        verbose,
                        antsPath)
     #clean up
-    #shutil.rmtree(frame_dir)
-    #shutil.rmtree(workingDir)
+    shutil.rmtree(frame_dir)
+    shutil.rmtree(workingDir)
     fnotes.close()
     
     print(filesToAverage)

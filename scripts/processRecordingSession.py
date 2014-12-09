@@ -1,7 +1,7 @@
 import os
 import re
 import argparse
-import registerSLO
+import registerSLO2
 
 def main(folder,mask1,mask2,verbose,force,antsPath):
     """Uses the registerSLO.py script to process all SLO recordings in a session.
@@ -25,7 +25,7 @@ def main(folder,mask1,mask2,verbose,force,antsPath):
         
         src_file = os.path.join(folder,f)
         
-        registerSLO.main(src_file,working_dir,mask1,mask2,verbose,force,antsPath)
+        registerSLO2.main(src_file,working_dir,mask1,mask2,verbose,force,antsPath)
         
 if __name__ == "__main__":  
     parser = argparse.ArgumentParser(description='Register frames in an SLO file using scripts and executables from ANTs')

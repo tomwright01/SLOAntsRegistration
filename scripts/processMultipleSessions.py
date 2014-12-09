@@ -29,7 +29,7 @@ for iDir in range(len(sourceDirs)):
     logging.debug('Processing source dir:{0}/{1}'.format(sourceDirs[iDir][0],sourceDirs[iDir][1]))
                   
     localDir=tempfile.mkdtemp()
-    sourceDir=os.path.join(basedir,sourceDirs[iDir][0],sourceDirs[iDir][1])
+    sourceDir=os.path.join(baseDir,sourceDirs[iDir][0],sourceDirs[iDir][1])
     #copy the source files into localDir
     input_files = [f for f in os.listdir(sourceDir) if re.match(r'(SLO_refl_video).*(avi)',f)]
     input_files = [f for f in input_files if os.stat(os.path.join(sourceDir,f)).st_size < 100000000]

@@ -28,12 +28,16 @@ def main(imgs):
     """going to find how wide the interlace is in this movie,
     to do this we need to find which rows are black"""
     #split a frame into odd and even rows
-    odd=working[0:frameSize[0]:2,:,:].sum(axis=2).sum(axis=0)
-    even=working[1:frameSize[0]:2,:,:].sum(axis=2).sum(axis=0)
+    odd=working[0:frameSize[0]:2,:,:]
+    even=working[1:frameSize[0]:2,:,:]
+    odd[odd<=10]=0
+    even[even<=10]=0
     
+    odd=odd.sum(axis=2).sum(axis=0)
+    even=even.sum(axis=2).sum(axis=0)
     #looks like we get a bit of noise here
-    odd[odd<1000]=0
-    even[even<1000]=0
+    #odd[odd<1000]=0
+    #even[even<1000]=0
 
     if odd[0]==0:
         left=odd

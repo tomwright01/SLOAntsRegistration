@@ -22,8 +22,6 @@ def main(input_avi,outdir,mask1,mask2,verbose,force,antsPath):
     Register frames in an SLO file using scripts and executables from ANTs
     https://stnava.github.io/ANTs/
     """
-    logging.basicConfig(filename='log.log',level=logging.INFO)
-    logging.info('Started')
     #check the output directory exists
     if not os.path.isdir(outdir):
         if force:

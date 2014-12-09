@@ -2,6 +2,7 @@ import os
 import re
 import argparse
 import registerSLO2
+import logging
 
 def main(folder,mask1,mask2,verbose,force,antsPath):
     """Uses the registerSLO.py script to process all SLO recordings in a session.
@@ -24,7 +25,7 @@ def main(folder,mask1,mask2,verbose,force,antsPath):
             os.mkdir(working_dir)
         
         src_file = os.path.join(folder,f)
-        
+        logging.debug('Registering file:{0}'.format(src_file))
         registerSLO2.main(src_file,working_dir,mask1,mask2,verbose,force,antsPath)
         
 if __name__ == "__main__":  

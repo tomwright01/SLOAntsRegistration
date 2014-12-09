@@ -38,6 +38,7 @@ for iDir in range(len(sourceDirs)):
         try:
             shutil.copyfile(os.path.join(sourceDir,f),
                             os.path.join(localDir,f))
+            logging.debug('Copied file:{0}'.format(f))
         except:
             logging.debug('Failed copying file:{0}'.format(os.path.join(sourceDir,f)))
             

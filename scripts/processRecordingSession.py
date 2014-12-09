@@ -3,7 +3,7 @@ import re
 import argparse
 import registerSLO
 
-def main(folder,mask1,mask2,verbose,force,avconvPath,convtojpegPath,imPath,antsPath,avgimgPath,threshPath,applyPath):
+def main(folder,mask1,mask2,verbose,force,antsPath):
     """Uses the registerSLO.py script to process all SLO recordings in a session.
     Creates a sub folder for each SLO recording, 
     tries to register the frames and create an average image.
@@ -25,7 +25,7 @@ def main(folder,mask1,mask2,verbose,force,avconvPath,convtojpegPath,imPath,antsP
         
         src_file = os.path.join(folder,f)
         
-        registerSLO.main(src_file,working_dir,mask1,mask2,verbose,force,avconvPath,convtojpegPath,imPath,antsPath,avgimgPath,threshPath,applyPath)
+        registerSLO.main(src_file,working_dir,mask1,mask2,verbose,force,antsPath)
         
 if __name__ == "__main__":  
     parser = argparse.ArgumentParser(description='Register frames in an SLO file using scripts and executables from ANTs')
@@ -36,24 +36,9 @@ if __name__ == "__main__":
                         help="name of the image to use as a mask for the correlation process")
     parser.add_argument('-v','--verbose',action="store_true")
     parser.add_argument('-f','--force',action="store_true")
-    parser.add_argument('--avconvPath',help='path to the avconv executable',
-                        default='/usr/bin/avconv')
-    parser.add_argument('--convtojpegPath',help='path to the ConvertToJpg executable',
-                        default='/home/tom/Source/ANTsStuff/antsbin/bin/ConvertToJpg')
-    parser.add_argument('--imPath',help='path to the ImageMath executable',
-                        default='/home/tom/Source/ANTsStuff/antsbin/bin/ImageMath')
     parser.add_argument('--antsPath',
                         help="Path to the antsRegistration executable",
                         default="/home/tom/Source/ANTsStuff/antsbin/bin")
-    parser.add_argument('--avgimgPath',
-                        help="Path to the AverageImage executable",
-                        default="/home/tom/Source/ANTsStuff/antsbin/bin/AverageImages")
-    parser.add_argument('--threshPath',
-                        help="Path to the ThresholdImage executable",
-                        default="/home/tom/Source/ANTsStuff/antsbin/bin/ThresholdImage")
-    parser.add_argument('--applyPath',
-                        help="Path to the antsApplyTransform executable",
-                        default="/home/tom/Source/ANTsStuff/antsbin/bin/antsApplyTransform")
 
 
     args=parser.parse_args()
@@ -63,10 +48,4 @@ if __name__ == "__main__":
         args.mask2,
         args.verbose,
         args.force,
-        args.avconvPath,
-        args.convtojpegPath,
-        args.imPath,
-        args.antsPath,
-        args.avgimgPath,
-        args.threshPath,
-        args.applyPath)
+        args.antsPath)

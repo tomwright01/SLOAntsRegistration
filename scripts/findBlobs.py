@@ -1,9 +1,11 @@
 import subprocess
 import logging
+import os
 
-def main(fixedImage,movingImage,blobFixed,blobMoving,candidateCount,finalCount,dilate,imPath):
+def main(fixedImage,movingImage,blobFixed,blobMoving,candidateCount,finalCount,dilate,antsPath):
     """find blobs"""
     logging.info('Finding Blobs with command')
+    imPath=os.path.join(antsPath,'ImageMath')
     cmd_findBlobs = '{0} {1} {2} BlobDetector {3} {4} {5} {6} {7}'.format(imPath,
                                                                           2,
                                                                           blobFixed,

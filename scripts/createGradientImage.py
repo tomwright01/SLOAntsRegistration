@@ -1,8 +1,10 @@
 import subprocess
 import logging
+import os
 
-def main(dims,outputName,inputName,Sigma,imPath):
+def main(dims,outputName,inputName,Sigma,antsPath):
     """Use the ANTs ImageMath to create a gradient image"""
+    imPath = os.path.join(antsPath,'ImageMath')
     cmd = '{0} {1} {2} Grad {3} {4}'.format(imPath,dims,outputName,inputName,Sigma)
     logging.info('Creating Gradient Image with command:')
     logging.info('=======================')

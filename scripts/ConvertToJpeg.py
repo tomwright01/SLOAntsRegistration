@@ -1,11 +1,12 @@
 import subprocess
 import argparse
+import os
 
-def main(finput,output,verbose,exePath):
+def main(finput,output,verbose,antsPath):
     """
     Uses ANT executable ConvertToJpg to convert from *.nii.gz to jpg.
     """
-   
+    exePath = os.path.join(antsPath,'ConvertToJpg')
     cmd = '{0} "{1}" "{2}"'.format(exePath,finput,output)
     if verbose:
         print "Called command:{0}".format(cmd)
@@ -16,7 +17,7 @@ if __name__ == "__main__":
     parser.add_argument('input',help="Path to the input image")
     parser.add_argument('output',help="Path to the output image")
     parser.add_argument('-v','--verbose',action="store_true")
-    parser.add_argument('--exePath',help='path to the ConvertToJpg executable',
+    parser.add_argument('--antsPath',help='path to the antsbin binaries',
                         default='/home/tom/Documents/Projects/antsbin/bin/ConvertToJpg')
 
     args=parser.parse_args()

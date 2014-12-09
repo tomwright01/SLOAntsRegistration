@@ -1,14 +1,15 @@
 import subprocess
 import argparse
 import logging
+import os
 
-def main(framelist,output,verbose,avgimgPath):
+def main(framelist,output,verbose,antsPath):
     """
     Create an average frame from frames in framelist
     """
     logging.info('Averaging frames with command:')
     logging.info('==============================')
-    
+    avgimgPath=os.path.join(antsPath,'AverageImages')
     frameStr = ' '.join(framelist)
     cmd = '{0} 2 {1} 1 {2}'.format(avgimgPath,output,frameStr)
     logging.info(cmd)
